@@ -17,9 +17,10 @@ interface PreviewPanelProps {
     onMouseMove: (e: React.MouseEvent) => void;
     onMouseUp: () => void;
     onWheel: (e: React.WheelEvent) => void;
-    code: string; // Needed for markdown rendering and status bar
+    code: string;
     theme: any; // Needed for markdown
     onScroll?: (e: React.UIEvent<HTMLDivElement>) => void;
+    isDarkMode: boolean;
 }
 
 const PreviewPanel = forwardRef<HTMLDivElement, PreviewPanelProps>(({
@@ -38,28 +39,29 @@ const PreviewPanel = forwardRef<HTMLDivElement, PreviewPanelProps>(({
     onWheel,
     code,
     theme,
-    onScroll
+    onScroll,
+    isDarkMode
 }, ref) => {
 
     // DIFFERENT LAYOUT STRATEGY BASED ON MODE
     if (mode === 'markdown') {
         return (
-            <section className="flex-1 flex flex-col bg-slate-100 relative overflow-hidden group/preview">
+            <section className="flex-1 flex flex-col bg-slate-100 dark:bg-slate-950 relative overflow-hidden group/preview transition-colors duration-200">
                 {/* Markdown Toolbar / Status if needed, or just container */}
                 <div
                     ref={ref}
                     onScroll={onScroll}
-                    className="flex-1 overflow-auto custom-scrollbar p-8 bg-white scroll-smooth"
+                    className="flex-1 overflow-auto custom-scrollbar p-8 bg-white dark:bg-slate-900 scroll-smooth"
                 >
-                    <div className="max-w-4xl mx-auto min-h-full">
+                    <div className="max-w-4xl mx-auto min-h-full bg-white p-8 shadow-sm">
                         <MarkdownPreview content={code} theme={theme} />
                     </div>
                 </div>
 
                 {/* Minimal Status Bar for Markdown */}
-                <div className="h-10 border-t border-slate-200 bg-white flex items-center justify-between px-6 text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] shrink-0 z-30">
-                    <span>Markdown Preview</span>
-                    <span>{code.length} Chars</span>
+                <div className="h-10 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between px-6 text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-[0.2em] shrink-0 z-30 transition-colors duration-200">
+                    <span>標記掉落 預習</span>
+                    <span>{code.length} 字元</span>
                 </div>
             </section>
         );
@@ -67,11 +69,11 @@ const PreviewPanel = forwardRef<HTMLDivElement, PreviewPanelProps>(({
 
     return (
         <section
-            className="flex-1 flex flex-col bg-slate-100 relative overflow-hidden group/preview"
+            className="flex-1 flex flex-col bg-slate-100 dark:bg-slate-950 relative overflow-hidden group/preview transition-colors duration-200"
             onWheel={onWheel}
         >
             {error && (
-                <div className="absolute top-6 left-6 right-6 z-40 flex flex-col gap-3 p-5 bg-red-50 border border-red-200 rounded-xl text-red-800 shadow-2xl animate-in slide-in-from-top-4 duration-300">
+                <div className="absolute top-6 left-6 right-6 z-40 flex flex-col gap-3 p-5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/50 rounded-xl text-red-800 dark:text-red-200 shadow-2xl animate-in slide-in-from-top-4 duration-300">
                     <div className="flex items-start gap-4">
                         <div className="p-2 bg-red-100 rounded-lg text-red-600"><AlertCircle size={20} /></div>
                         <div className="text-xs flex-1">
@@ -85,16 +87,9 @@ const PreviewPanel = forwardRef<HTMLDivElement, PreviewPanelProps>(({
 
             {/* Floating Controls */}
             <div className="absolute bottom-16 right-8 z-30 flex flex-col gap-3 opacity-0 group-hover/preview:opacity-100 transition-all duration-500 translate-y-4 group-hover/preview:translate-y-0">
-                <button onClick={() => onZoom(25)} className="p-3.5 bg-white border border-slate-200 rounded-2xl shadow-xl text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-all active:scale-90 ring-1 ring-black/5" title="Zoom In"><ZoomIn size={22} /></button>
-                <button onClick={() => onZoom(-25)} className="p-3.5 bg-white border border-slate-200 rounded-2xl shadow-xl text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-all active:scale-90 ring-1 ring-black/5" title="Zoom Out"><ZoomOut size={22} /></button>
-                <button onClick={onResetNav} className="p-3.5 bg-white border border-slate-200 rounded-2xl shadow-xl text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-all active:scale-90 ring-1 ring-black/5" title="Center View"><Maximize size={22} /></button>
-            </div>
-
-            {/* Tips Overlay */}
-            <div className="absolute bottom-16 left-8 z-30 opacity-0 group-hover/preview:opacity-100 transition-all duration-500 translate-y-4 group-hover/preview:translate-y-0 flex items-center gap-3 px-4 py-2 bg-white/80 backdrop-blur rounded-full border border-slate-200 shadow-lg text-[10px] text-slate-500 font-bold uppercase tracking-widest">
-                <div className="flex items-center gap-1.5"><Hand size={12} className="text-indigo-500" /> Drag to Pan</div>
-                <div className="w-1 h-1 bg-slate-300 rounded-full" />
-                <div className="flex items-center gap-1.5"><ZoomIn size={12} className="text-indigo-500" /> Ctrl + Scroll to Zoom</div>
+                <button onClick={() => onZoom(25)} className="p-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all active:scale-90 ring-1 ring-black/5" title="放大"><ZoomIn size={22} /></button>
+                <button onClick={() => onZoom(-25)} className="p-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all active:scale-90 ring-1 ring-black/5" title="缩小"><ZoomOut size={22} /></button>
+                <button onClick={onResetNav} className="p-3.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all active:scale-90 ring-1 ring-black/5" title="居中"><Maximize size={22} /></button>
             </div>
 
             {/* Main Viewport */}
@@ -105,7 +100,7 @@ const PreviewPanel = forwardRef<HTMLDivElement, PreviewPanelProps>(({
                 onMouseUp={onMouseUp}
                 onMouseLeave={onMouseUp}
                 style={{
-                    background: 'radial-gradient(circle, #cbd5e1 1.5px, transparent 1.5px)',
+                    backgroundImage: isDarkMode ? 'radial-gradient(circle, #475569 1.5px, transparent 1.5px)' : 'radial-gradient(circle, #cbd5e1 1.5px, transparent 1.5px)',
                     backgroundSize: '32px 32px'
                 }}
             >
@@ -130,7 +125,7 @@ const PreviewPanel = forwardRef<HTMLDivElement, PreviewPanelProps>(({
                                 <RefreshCw size={64} className="opacity-10 animate-spin duration-[3s]" />
                                 <Sparkles size={32} className="absolute inset-0 m-auto text-indigo-400/30 animate-pulse" />
                             </div>
-                            <p className="text-sm font-bold uppercase tracking-[0.3em] opacity-40">Compiling Diagram</p>
+                            <p className="text-sm font-bold uppercase tracking-[0.3em] opacity-40">編譯圖表</p>
                         </div>
                     )}
 
@@ -145,21 +140,21 @@ const PreviewPanel = forwardRef<HTMLDivElement, PreviewPanelProps>(({
             </div>
 
             {/* Status Bar */}
-            <div className="h-10 border-t border-slate-200 bg-white flex items-center justify-between px-6 text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] shrink-0 z-30">
+            <div className="h-10 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between px-6 text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-[0.2em] shrink-0 z-30 transition-colors duration-200">
                 <div className="flex items-center gap-3">
                     <div className={`w-2.5 h-2.5 rounded-full border-2 ${error ? 'bg-red-500 border-red-200' : 'bg-green-500 border-green-200 animate-pulse'}`} />
-                    <span className={error ? 'text-red-500' : 'text-slate-500'}>{error ? 'Syntax Critical' : 'Engine Ready'}</span>
+                    <span className={error ? 'text-red-500' : 'text-slate-500'}>{error ? '批判的 語法' : '引擎 準備'}</span>
                 </div>
                 <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2">
-                        <span className="opacity-50">Zoom</span>
+                        <span className="opacity-50">縮放</span>
                         <span className="text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md tabular-nums">{zoom}%</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <span className="opacity-50">Position</span>
+                        <span className="opacity-50">位置</span>
                         <span className="text-slate-600 tabular-nums">{Math.round(position.x)}, {Math.round(position.y)}</span>
                     </div>
-                    <span>{code.length} Chars</span>
+                    <span>{code.length} 字元</span>
                 </div>
             </div>
         </section>

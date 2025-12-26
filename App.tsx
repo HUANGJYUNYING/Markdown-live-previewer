@@ -36,13 +36,38 @@ console.log('Hello');
 type EditorMode = 'mermaid' | 'markdown';
 
 const App: React.FC = () => {
-  const [mode, setMode] = useState<EditorMode>('mermaid');
-  const [code, setCode] = useState(DEFAULT_MERMAID);
+  const [mode, setMode] = useState<EditorMode>(() => {
+    return (localStorage.getItem('editor-mode') as EditorMode) || 'mermaid';
+  });
+
+  const [code, setCode] = useState(() => {
+    const savedMode = (localStorage.getItem('editor-mode') as EditorMode) || 'mermaid';
+    return localStorage.getItem(`${savedMode}-session-code`) || (savedMode === 'mermaid' ? DEFAULT_MERMAID : DEFAULT_MARKDOWN);
+  });
   const [svgContent, setSvgContent] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [theme, setTheme] = useState<Theme>('neutral');
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const [isSyncScroll, setIsSyncScroll] = useState(true);
+
+  // Toggle Dark Mode
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
+
+  // Save state to localStorage
+  useEffect(() => {
+    localStorage.setItem('editor-mode', mode);
+  }, [mode]);
+
+  useEffect(() => {
+    localStorage.setItem(`${mode}-session-code`, code);
+  }, [code, mode]);
 
   // Custom Hook for Navigation
   const {
@@ -124,7 +149,15 @@ const App: React.FC = () => {
 
   const handleModeSwitch = (newMode: EditorMode) => {
     setMode(newMode);
-    setCode(newMode === 'mermaid' ? DEFAULT_MERMAID : DEFAULT_MARKDOWN);
+
+    // Try to restore saved session for the new mode, or valid default
+    const savedCode = localStorage.getItem(`${newMode}-session-code`);
+    if (savedCode) {
+      setCode(savedCode);
+    } else {
+      setCode(newMode === 'mermaid' ? DEFAULT_MERMAID : DEFAULT_MARKDOWN);
+    }
+
     resetNavigation();
   };
 
@@ -306,8 +339,9 @@ const App: React.FC = () => {
   };
 
   const handleReset = () => {
-    if (confirm("Reset current work?")) {
-      setCode(mode === 'mermaid' ? DEFAULT_MERMAID : DEFAULT_MARKDOWN);
+    if (confirm("重置當前的工作到預設?")) {
+      const defaultCode = mode === 'mermaid' ? DEFAULT_MERMAID : DEFAULT_MARKDOWN;
+      setCode(defaultCode);
       resetNavigation();
     }
   };
@@ -317,12 +351,14 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen max-h-screen bg-slate-50 select-none">
+    <div className="flex flex-col h-screen max-h-screen bg-slate-50 dark:bg-slate-900 select-none transition-colors duration-200">
       <Header
         mode={mode}
         setMode={handleModeSwitch}
         theme={theme}
         setTheme={(t) => setTheme(t as Theme)}
+        isDarkMode={isDarkMode}
+        toggleDarkMode={() => setIsDarkMode(!isDarkMode)}
         onDownloadMarkdown={downloadMarkdown}
         onExportImage={exportAsImage}
         isSyncScroll={isSyncScroll}
@@ -340,6 +376,7 @@ const App: React.FC = () => {
           onClear={handleClear}
           copied={copied}
           onScroll={handleEditorScroll}
+          isDarkMode={isDarkMode}
         />
 
         <PreviewPanel
@@ -360,6 +397,7 @@ const App: React.FC = () => {
           onScroll={handlePreviewScroll}
           code={code}
           theme={theme}
+          isDarkMode={isDarkMode}
         />
       </main>
     </div>
