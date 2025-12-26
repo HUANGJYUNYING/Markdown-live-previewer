@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Markdown Live Editor</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    .mono {
+      font-family: 'Fira Code', monospace;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    @media print {
+      @page {
+        margin: 0;
+        size: auto;
+      }
+
+      /* 1. Global Reset */
+      body,
+      #root,
+      main {
+        height: auto !important;
+        width: 100% !important;
+        overflow: visible !important;
+        display: block !important;
+        background: white !important;
+        margin: 0 !important;
+        padding: 2cm !important;
+        /* Restore padding since we killed page margins */
+      }
+
+      /* 2. Hide Non-Print Elements */
+      header,
+      section:first-of-type,
+      /* Editor Panel */
+      .editor-pane,
+      .controls,
+      button {
+        display: none !important;
+      }
+
+      /* 3. Target Preview Panel (The Right Side) */
+      section:last-of-type {
+        display: block !important;
+        position: static !important;
+        width: 100% !important;
+        height: auto !important;
+        border: none !important;
+        background: white !important;
+        overflow: visible !important;
+      }
+
+      /* Hide Floating Controls, Tips, and Status Bar within Preview Panel */
+      /* These are absolute positioned divs or the bottom h-10 bar */
+      section:last-of-type>div.absolute,
+      section:last-of-type>div.h-10 {
+        display: none !important;
+      }
+
+      /* 4. Fix The Diagram Container Structure */
+
+      /* The Viewport (flex-1 overflow-hidden) */
+      section:last-of-type>div.flex-1 {
+        position: static !important;
+        overflow: visible !important;
+        /* Allow diagram to spill */
+        height: auto !important;
+        background: white !important;
+        /* Remove grid background */
+        background-image: none !important;
+      }
+
+      /* The Panning Container (absolute inset-0) */
+      /* We must reset this to static to let the document flow */
+      section:last-of-type>div.flex-1>div.absolute {
+        position: static !important;
+        inset: auto !important;
+        transform: none !important;
+        /* KILL THE PANNING TRANSFORM */
+        display: flex !important;
+        justify-content: center !important;
+        align-items: flex-start !important;
+        padding-top: 20px !important;
+      }
+
+      /* The Diagram Card (bg-white p-16...) */
+      /* This holds the SVG. We need to kill the ZOOM transform */
+      section:last-of-type>div.flex-1>div.absolute>div.bg-white {
+        transform: none !important;
+        /* KILL THE ZOOM TRANSFORM */
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      /* The SVG itself */
+      svg {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        display: block !important;
+        margin: 0 auto !important;
+      }
+    }
+  </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "@google/genai": "https://esm.sh/@google/genai@^1.34.0",
+    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
+    "mermaid": "https://esm.sh/mermaid@^11.12.2"
+  }
+}
+</script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+
+<body class="bg-slate-50 text-slate-900 overflow-hidden">
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>
