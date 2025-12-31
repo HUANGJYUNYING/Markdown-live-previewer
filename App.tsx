@@ -17,21 +17,148 @@ mermaid.initialize({
 });
 
 
-const DEFAULT_MERMAID = `graph TD
-    A[Start] --> B{Is it working?}
-    B -- Yes --> C[Enjoy!]
-    B -- No --> D[Debug]
-    D --> B`;
-
-const DEFAULT_MARKDOWN = `# Hello Markdown
-This is a **Markdown** editor.
-- List item 1
-- List item 2
-
-\`\`\`javascript
-console.log('Hello');
-\`\`\`
+const DEFAULT_MERMAID = `---
+title: Mermaid 語法示範
+---
+graph TB
+    %% === 流程圖：展示各種節點和連接方式 ===
+    
+    Start([開始]) --> Input[/輸入資料/]
+    Input --> Process[處理資料]
+    Process --> Decision{是否有效?}
+    
+    Decision -->|是| SubGraph[進入子流程]
+    Decision -->|否| Error[顯示錯誤]
+    Error --> Input
+    
+    SubGraph --> Database[(儲存到<br/>資料庫)]
+    Database --> Output[/輸出結果/]
+    Output --> End((結束))
+    
+    %% 樣式定義
+    classDef processStyle fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    classDef errorStyle fill:#ffebee,stroke:#c62828,stroke-width:2px
+    classDef successStyle fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    
+    class Process,SubGraph processStyle
+    class Error errorStyle
+    class End successStyle
+    
+    %% ====================================
+    %% 其他圖表類型範例（取消註解即可使用）
+    %% ====================================
+    
+    %% 序列圖 (Sequence Diagram)
+    %% sequenceDiagram
+    %%     participant 用戶
+    %%     participant 系統
+    %%     participant 資料庫
+    %%     用戶->>系統: 發送請求
+    %%     系統->>資料庫: 查詢資料
+    %%     資料庫-->>系統: 返回結果
+    %%     系統-->>用戶: 顯示結果
+    
+    %% 類別圖 (Class Diagram)
+    %% classDiagram
+    %%     class Animal {
+    %%         +String name
+    %%         +int age
+    %%         +makeSound()
+    %%     }
+    %%     class Dog {
+    %%         +String breed
+    %%         +bark()
+    %%     }
+    %%     Animal <|-- Dog
+    
+    %% 狀態圖 (State Diagram)
+    %% stateDiagram-v2
+    %%     [*] --> 待處理
+    %%     待處理 --> 處理中: 開始處理
+    %%     處理中 --> 已完成: 處理成功
+    %%     處理中 --> 失敗: 處理失敗
+    %%     失敗 --> 待處理: 重試
+    %%     已完成 --> [*]
+    
+    %% 甘特圖 (Gantt Chart)
+    %% gantt
+    %%     title 專案時程表
+    %%     dateFormat YYYY-MM-DD
+    %%     section 設計階段
+    %%     需求分析: 2024-01-01, 7d
+    %%     UI設計: 2024-01-08, 5d
+    %%     section 開發階段
+    %%     前端開發: 2024-01-13, 10d
+    %%     後端開發: 2024-01-13, 10d
+    
+    %% 圓餅圖 (Pie Chart)
+    %% pie title 專案時間分配
+    %%     "設計" : 30
+    %%     "開發" : 45
+    %%     "測試" : 15
+    %%     "部署" : 10
 `;
+
+const DEFAULT_MARKDOWN = `# Markdown 文法指南
+
+## 標題
+# 這是標題 h1
+## 這是標題 h2
+###### 這是標題 h6
+
+## 強調
+*此文字將為斜體*
+_此文字也將為斜體_
+
+**此文字將為粗體**
+__此文字也將為粗體__
+
+_您可以 **組合使用** 它們_
+
+## 列表
+
+### 無序列表
+* 項目 1
+* 項目 2
+  * 項目 2a
+  * 項目 2b
+* 項目 3
+  * 項目 3a
+  * 項目 3b
+
+### 有序列表
+1. 項目 1
+2. 項目 2
+3. 項目 3
+   1. 項目 3a
+   2. 項目 3b
+
+## 圖片
+![這是替代文字](/image/Markdown-mark.svg "這是一張範例圖片")
+
+## 連結
+您可能正在使用 [Markdown 線上預覽](https://markdownlivepreview.com/)。
+
+## 引用區塊
+> Markdown 是一種輕量級的標記語言，採用純文字格式語法，由 John Gruber 和 Aaron Swartz 於 2004 年創建。
+>
+> Markdown 常用於格式化 README 文件、在線上論壇中撰寫訊息，以及使用純文字編輯器建立富文本。
+
+## 表格
+| 左列 | 右列 |
+| ------------- |:-------------:|
+| 左列 foo | 右列 foo |
+| 左列 bar | 右列 bar |
+| 左列 baz | 右列 baz |
+
+## 程式碼區塊
+\`\`\`javascript
+let message = 'Hello world';
+alert(message);
+\`\`\`
+
+## 行內程式碼
+本網站使用 \`markedjs/marked\`。`;
 
 type EditorMode = 'mermaid' | 'markdown';
 
