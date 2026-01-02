@@ -247,10 +247,14 @@ const App: React.FC = () => {
     const percentage = target.scrollTop / (target.scrollHeight - target.clientHeight);
 
     if (previewRef.current) {
-      previewRef.current.scrollTop = percentage * (previewRef.current.scrollHeight - previewRef.current.clientHeight);
+      requestAnimationFrame(() => {
+        if (previewRef.current) {
+          previewRef.current.scrollTop = percentage * (previewRef.current.scrollHeight - previewRef.current.clientHeight);
+        }
+      });
     }
 
-    setTimeout(() => { isScrolling.current = false; }, 50);
+    setTimeout(() => { isScrolling.current = false; }, 150);
   };
 
   const handlePreviewScroll = (e: React.UIEvent<HTMLDivElement>) => {
@@ -261,10 +265,14 @@ const App: React.FC = () => {
     const percentage = target.scrollTop / (target.scrollHeight - target.clientHeight);
 
     if (editorRef.current) {
-      editorRef.current.scrollTop = percentage * (editorRef.current.scrollHeight - editorRef.current.clientHeight);
+      requestAnimationFrame(() => {
+        if (editorRef.current) {
+          editorRef.current.scrollTop = percentage * (editorRef.current.scrollHeight - editorRef.current.clientHeight);
+        }
+      });
     }
 
-    setTimeout(() => { isScrolling.current = false; }, 50);
+    setTimeout(() => { isScrolling.current = false; }, 150);
   };
 
 

@@ -51,7 +51,7 @@ const PreviewPanel = forwardRef<HTMLDivElement, PreviewPanelProps>(({
                 <div
                     ref={ref}
                     onScroll={onScroll}
-                    className="flex-1 overflow-auto custom-scrollbar p-8 bg-white dark:bg-slate-900 scroll-smooth"
+                    className="flex-1 overflow-auto custom-scrollbar p-8 bg-white dark:bg-slate-900"
                 >
                     <div className="max-w-4xl mx-auto min-h-full bg-white p-8 shadow-sm">
                         <MarkdownPreview content={code} theme={theme} />
